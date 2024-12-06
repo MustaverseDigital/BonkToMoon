@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +17,8 @@ public class BonkBall : MonoBehaviour
     private Vector3 newPosition, resetPos;
     private Rigidbody rb;
     public FixedJoint Joint;
+
+    public Action OnLinkBall;
 
     // Start is called before the first frame update
     void Start()
@@ -58,11 +61,17 @@ public class BonkBall : MonoBehaviour
 
     private void OnCollisionEnter(Collision col)
     {
-        if (col.gameObject.tag == "Player")
+        if (!col.gameObject.CompareTag("Player"))
+        {
+            return;
+        }
+
+        if (Joint == null)
         {
             Joint = gameObject.AddComponent<FixedJoint>();
-            Joint.connectedBody = col.rigidbody;
+            OnLinkBall?.Invoke();
         }
+        Joint.connectedBody = col.rigidbody;
     }
 
     void ResetBall()

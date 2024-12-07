@@ -1,4 +1,4 @@
-'use Client';
+"use client";
 import { useEffect, useState } from "react";
 import { Unity, useUnityContext } from "react-unity-webgl";
 import Image from "next/image";

@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Unity, useUnityContext } from "react-unity-webgl";
 import Image from "next/image";
-import fansLoverLogo from "/public/fansLoverLogo.jpg";
+import bonktomoon from "/public/bonktomoon.png";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react"
 
@@ -43,49 +43,32 @@ const Game = () => {
       mediaMatcher.removeEventListener("change", updateDevicePixelRatio);
     };
   }, [devicePixelRatio]);
-
+  
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-sky-100">
       {/* Top Bar */}
-      <div className="absolute top-4 left-0 right-0 flex justify-between items-center p-2">
+      <div className="flex justify-between items-center w-full p-2 bg-[#FC7F18]" >
         <div className="flex items-center justify-evenly gap-3">
           <Image
-            src={fansLoverLogo}
-            alt="fans_lover_logo"
-            width={50}
-            height={50}
-            className="rounded-full"
+            src={bonktomoon}
+            alt="bonktomoon"
+            width={150}
+            height={100}
           />
-          <div className="flex flex-col items-center justify-center gap-1">
-            <span className="font-bold">FansLover </span>
-          </div>
         </div>
-        <div className="border hover:border-slate-900 rounded">
-          <WalletMultiButton />
-        </div>
+        <WalletMultiButton style={{ backgroundColor: '#121214', borderRadius: '40px' }} />
       </div>
 
-      <div className="relative w-auto h-auto bg-white rounded-lg p-1">
+      <div className="relative w-full h-auto">
         <Unity
           unityProvider={unityProvider}
           style={{
-            height: "calc(100vh - 11rem)",
-            width: `calc((100vh - 11rem) * (9 / 16))`,
-            borderRadius: "15px",
+            height: "calc(100vh - 64px)",
+            width: '100%',
           }}
           devicePixelRatio={devicePixelRatio}
         />
-      </div>
-      {/* Bottom Nav */}
-      <div className="absolute bottom-7 left-0 right-0 px-2 ">
-        <div className="flex justify-center items-center gap-1">
-          <button
-            className="rounded-3xl w-1/2 p-1  sm:p-2 md:p-3 flex items-center justify-center"
-          >
-            <span className="font-light">test</span>
-          </button>
-        </div>
       </div>
       <audio src="/bgm.mp3" muted={false} autoPlay loop />
     </div>

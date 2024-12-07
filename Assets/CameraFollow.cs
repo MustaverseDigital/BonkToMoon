@@ -69,5 +69,10 @@ namespace DefaultNamespace
             // 設定相機始終面向中心點
             transform.LookAt(new Vector3(centerPoint.x, _currentHeight, centerPoint.z));
         }
+
+        public void RotateCamera(float value)
+        {
+            _currentAngle += rotationSpeed * value * Time.deltaTime;
+        }
     }
 }

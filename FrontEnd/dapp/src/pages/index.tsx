@@ -7,10 +7,10 @@ import fansLoverLogo from "/public/fansLoverLogo.jpg";
 const Game = () => {
 
   const { unityProvider } = useUnityContext({
-    loaderUrl: "/Build/docs.loader.js",
-    dataUrl: "/Build/docs.data",
-    frameworkUrl: "/Build/docs.framework.js",
-    codeUrl: "/Build/docs.wasm",
+    loaderUrl: "/Build/GameBuild.loader.js",
+    dataUrl: "/Build/GameBuild.data",
+    frameworkUrl: "/Build/GameBuild.framework.js",
+    codeUrl: "/Build/GameBuild.wasm",
   });
 
   // We'll use a state to store the device pixel ratio.

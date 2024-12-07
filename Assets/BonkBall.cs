@@ -12,7 +12,7 @@ public class BonkBall : MonoBehaviour
     public float MinSwipDist = 0;
     private float BallVelocity = 0;
     private float BallSpeed = 0;
-    public float MaxBallSpeed = 50;
+    public float MaxBallSpeed = 1;
     private Vector3 angle;
     private Vector3 newPosition, resetPos;
     private Rigidbody rb;
@@ -46,13 +46,11 @@ public class BonkBall : MonoBehaviour
         swipeDistance = (endPos - startPos).magnitude;
         swipeTime = endTime - startTime;
 
-        if (swipeTime < 0.75f && swipeDistance > 30f)
+        if (swipeTime < 0.75f && swipeDistance > MinSwipDist)
         {
-            //throw ball
+            // 拋球
             CalSpeed();
-            CalAngle();
-            rb.AddForce(new Vector3((angle.x * BallSpeed), (angle.y * BallSpeed) * 2.5f, (-angle.y * BallSpeed) * 2));
-            rb.useGravity = true;
+            Shoot();
             Invoke("NextBall", 2f);
         }
         else
@@ -104,9 +102,14 @@ public class BonkBall : MonoBehaviour
         transform.localPosition = Vector3.Lerp(transform.localPosition, newPosition, 80f * Time.deltaTime);
     }
 
-    private void CalAngle()
+    private void Shoot()
     {
-        angle = Camera.main.ScreenToWorldPoint(new Vector3(endPos.x, endPos.y + 100f, (Camera.main.nearClipPlane + 5)));
+        Vector2 swipeVector = endPos - startPos;
+        var power = swipeVector.y / 100f;
+        var launchVector = (Camera.main.transform.forward + new Vector3(0, 1, 0)) * power;
+        // 使用攝影機方向和計算出的速度
+        rb.AddForce(launchVector * BallSpeed, ForceMode.Impulse);
+        rb.useGravity = true;
     }
 
     void CalSpeed()
@@ -114,7 +117,7 @@ public class BonkBall : MonoBehaviour
         if (swipeTime > 0)
             BallVelocity = swipeDistance / (swipeDistance - swipeTime);
 
-        BallSpeed = BallVelocity * 40;
+        BallSpeed = BallVelocity;
 
         if (BallSpeed <= MaxBallSpeed)
         {

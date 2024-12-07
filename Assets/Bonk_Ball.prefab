@@ -128,6 +128,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LaunchPoint: 15
-  MinSwipDist: 0
-  MaxBallSpeed: 50
+  MinSwipDist: 15
+  MaxBallSpeed: 1
   Joint: {fileID: 0}

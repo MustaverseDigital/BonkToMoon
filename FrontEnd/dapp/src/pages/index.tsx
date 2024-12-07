@@ -1,10 +1,15 @@
+'use Client';
 import { useEffect, useState } from "react";
 import { Unity, useUnityContext } from "react-unity-webgl";
 import Image from "next/image";
 import fansLoverLogo from "/public/fansLoverLogo.jpg";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { useWallet } from "@solana/wallet-adapter-react"
 
 
 const Game = () => {
+  const { publicKey } = useWallet();
+  console.log(publicKey);
 
   const { unityProvider } = useUnityContext({
     loaderUrl: "/Build/GameBuild.loader.js",
@@ -55,6 +60,9 @@ const Game = () => {
           <div className="flex flex-col items-center justify-center gap-1">
             <span className="font-bold">FansLover </span>
           </div>
+        </div>
+        <div className="border hover:border-slate-900 rounded">
+          <WalletMultiButton />
         </div>
       </div>
 

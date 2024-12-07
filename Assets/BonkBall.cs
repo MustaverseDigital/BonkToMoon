@@ -53,7 +53,7 @@ public class BonkBall : MonoBehaviour
             CalAngle();
             rb.AddForce(new Vector3((angle.x * BallSpeed), (angle.y * BallSpeed) * 2.5f, (-angle.y * BallSpeed) * 2));
             rb.useGravity = true;
-            // Invoke("ResetBall", 2f);
+            Invoke("NextBall", 2f);
         }
         else
             ResetBall();
@@ -61,17 +61,24 @@ public class BonkBall : MonoBehaviour
 
     private void OnCollisionEnter(Collision col)
     {
-        if (!col.gameObject.CompareTag("Player"))
+        if (col.gameObject.CompareTag("Player"))
+        {
+            if (Joint == null)
+            {
+                Joint = gameObject.AddComponent<FixedJoint>();
+                OnLinkBall?.Invoke();
+            }
+            Joint.connectedBody = col.rigidbody;
+        }
+        if (!col.gameObject.CompareTag("Ground"))
         {
             return;
         }
+    }
 
-        if (Joint == null)
-        {
-            Joint = gameObject.AddComponent<FixedJoint>();
-            OnLinkBall?.Invoke();
-        }
-        Joint.connectedBody = col.rigidbody;
+    void NextBall()
+    {
+        GameManager.instance.SpawnBall();
     }
 
     void ResetBall()

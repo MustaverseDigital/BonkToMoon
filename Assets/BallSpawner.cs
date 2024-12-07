@@ -12,17 +12,17 @@ public class BallSpawner : MonoBehaviour
     void Start()
     {
         currentBall = Instantiate(ballPrefab);
-        currentBall.transform.position = transform.position;
+        currentBall.transform.position = ballSpawnPoint.position;
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        if (!Input.GetKeyDown(KeyCode.Space)) return;
-        Spawn();
-    }
+    // void Update()
+    // {
+    //     if (!Input.GetKeyDown(KeyCode.Space)) return;
+    //     Spawn();
+    // }
 
-    private void Spawn()
+    public void Spawn()
     {
         currentBall = Instantiate(ballPrefab);
         currentBall.transform.position = ballSpawnPoint.position;

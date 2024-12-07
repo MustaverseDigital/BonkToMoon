@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2226479174664413017}
   - component: {fileID: 2226479174664413022}
   m_Layer: 0
-  m_Name: BonkBall
+  m_Name: TestBall
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

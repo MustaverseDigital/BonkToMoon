@@ -67,7 +67,7 @@ namespace DefaultNamespace
             transform.position = new Vector3(x, _currentHeight, z);
 
             // 設定相機始終面向中心點
-            transform.LookAt(new Vector3(centerPoint.x, _currentHeight, centerPoint.z));
+            transform.LookAt(new Vector3(centerPoint.x, _currentHeight-5, centerPoint.z));
         }
 
         public void RotateCamera(float value)

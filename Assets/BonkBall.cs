@@ -45,8 +45,7 @@ public class BonkBall : MonoBehaviour
         endPos = Input.mousePosition;
         swipeDistance = (endPos - startPos).magnitude;
         swipeTime = endTime - startTime;
-
-        if (swipeTime < 0.75f && swipeDistance > MinSwipDist)
+        if (swipeTime > 0.75f && swipeDistance > MinSwipDist)
         {
             // 拋球
             CalSpeed();
@@ -99,11 +98,12 @@ public class BonkBall : MonoBehaviour
         Vector3 mousePos = Input.mousePosition;
         mousePos.z = Camera.main.nearClipPlane * LaunchPoint;
         newPosition = Camera.main.ScreenToWorldPoint(mousePos);
-        transform.localPosition = Vector3.Lerp(transform.localPosition, newPosition, 80f * Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, newPosition, 80f * Time.deltaTime);
     }
 
     private void Shoot()
     {
+        transform.parent = null;
         Vector2 swipeVector = endPos - startPos;
         var power = swipeVector.y / 100f;
         var launchVector = (Camera.main.transform.forward + new Vector3(0, 1, 0)) * power;

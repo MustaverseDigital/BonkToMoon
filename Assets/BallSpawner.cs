@@ -11,21 +11,14 @@ public class BallSpawner : MonoBehaviour
 
     void Start()
     {
-        currentBall = Instantiate(ballPrefab);
-        currentBall.transform.position = ballSpawnPoint.position;
+       Spawn();
     }
-
-    // Update is called once per frame
-    // void Update()
-    // {
-    //     if (!Input.GetKeyDown(KeyCode.Space)) return;
-    //     Spawn();
-    // }
-
+    
     public void Spawn()
     {
         currentBall = Instantiate(ballPrefab);
         currentBall.transform.position = ballSpawnPoint.position;
+        currentBall.transform.parent = ballSpawnPoint;
         currentBall.OnLinkBall += CalculateScore;
         _ballList.Add(currentBall);
     }

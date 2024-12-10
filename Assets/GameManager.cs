@@ -30,8 +30,23 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        GameStart();
+        SetupButton();
+        MenuStart();
         TestLeaderboard();
+    }
+
+    private void SetupButton()
+    {
+        uiManager.trialModeButton.onClick.AddListener(GameStart);
+        //need to cost bonk coin
+        uiManager.rankModeButton.onClick.AddListener(GameStart);
+        uiManager.gameExitButton.onClick.AddListener(() => { uiManager.OpenPanel("Menu"); });
+        uiManager.rankBackButton.onClick.AddListener(() => { uiManager.OpenPanel("Menu"); });
+    }
+
+    private void MenuStart()
+    {
+        uiManager.OpenPanel("Menu");
     }
 
     private void TestLeaderboard()
@@ -58,6 +73,7 @@ public class GameManager : MonoBehaviour
 
     private void GameStart()
     {
+        uiManager.OpenPanel("Game");
         spawner.onBallLink += CalculateScore;
         _timer = gameTime;
         spawner.Spawn();

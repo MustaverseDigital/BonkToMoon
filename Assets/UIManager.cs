@@ -13,9 +13,9 @@ namespace DefaultNamespace
         [Header("Game Panel")] public TMP_Text scoreText;
         public TMP_Text gameTimeText;
         public Image gameTimeImage;
-        public Button exitButton;
+        public Button gameExitButton;
 
-        [Header("Rank Panel")] public Button backButton;
+        [Header("Rank Panel")] public Button rankBackButton;
         public LeaderBoardItem itemPrefab;
         public VerticalLayoutGroup itemGroup;
         public Sprite rank1, rank2, rank3;

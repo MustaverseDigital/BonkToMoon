@@ -20,6 +20,15 @@ namespace DefaultNamespace
         public VerticalLayoutGroup itemGroup;
         public Sprite rank1, rank2, rank3;
 
+        [Header("complete Panel")] public TMP_Text playerIDText;
+        public Image avatarImage;
+        public TMP_Text scoreResultText;
+        public TMP_Text rankText;
+        public Button leaderBoardButton;
+        public Button tryTrialButton;
+        public Button tryRankButton;
+        public Button completeExitButton;
+
         [Header("Game Panel")] public RectTransform menuPanel;
         public RectTransform gamePanel;
         public RectTransform enterPanel;
@@ -86,6 +95,17 @@ namespace DefaultNamespace
         {
             gameTimeText.text = $"{time:0.0}";
             gameTimeImage.fillAmount = time / 30f;
+        }
+
+        public void SetCompletePanelData(PlayerData data)
+        {
+            playerIDText.text = data.playerID;
+            if (data.sprite != null)
+            {
+                avatarImage.sprite = data.sprite;
+            }
+            scoreResultText.text = data.score.ToString();
+            rankText.text = data.rank.ToString();
         }
     }
 }

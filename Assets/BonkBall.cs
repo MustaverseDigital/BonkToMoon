@@ -71,7 +71,7 @@ public class BonkBall : MonoBehaviour
 
         if (col.gameObject.CompareTag("Ground"))
         {
-            Destroy(transform.root.gameObject, 2);
+            Destroy(gameObject, 2);
         }
     }
 
@@ -105,7 +105,9 @@ public class BonkBall : MonoBehaviour
 
     private void Shoot()
     {
+        var parent = transform.parent;
         transform.parent = null;
+        Destroy(parent.gameObject);
         Vector2 swipeVector = endPos - startPos;
         var power = swipeVector.y / 100f;
         var launchVector = (Camera.main.transform.forward + new Vector3(0, 1, 0)) * power;

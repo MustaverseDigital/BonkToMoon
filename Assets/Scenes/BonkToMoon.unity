@@ -698,6 +698,14 @@ MonoBehaviour:
   rank1: {fileID: 21300000, guid: 57047cc9eed8a4f8d9d7b788778c1cc2, type: 3}
   rank2: {fileID: 21300000, guid: 1607cb72f9cd74122a96314bdae5ce98, type: 3}
   rank3: {fileID: 21300000, guid: 071445aa00de84cd7a01a22930824744, type: 3}
+  playerIDText: {fileID: 3658958740083001007}
+  avatarImage: {fileID: 1693922588825937149}
+  scoreResultText: {fileID: 1789954238620584680}
+  rankText: {fileID: 4277059559230614977}
+  leaderBoardButton: {fileID: 5874035330205504225}
+  tryTrialButton: {fileID: 7528613058547409699}
+  tryRankButton: {fileID: 5110384039474339432}
+  completeExitButton: {fileID: 9014991618570194174}
   menuPanel: {fileID: 4360313691052268689}
   gamePanel: {fileID: 138049523}
   enterPanel: {fileID: 8599065173007912144}
@@ -17457,9 +17465,9 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2176296497216431050}
-  m_LocalRotation: {x: -0, y: -1, z: -0, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: -1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8007116428290709759}

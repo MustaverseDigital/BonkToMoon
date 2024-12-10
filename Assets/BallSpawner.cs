@@ -11,13 +11,10 @@ public class BallSpawner : MonoBehaviour
     public List<BonkBall> ballList = new();
 
     public Action onBallLink;
-    
+
     public void Spawn()
     {
-        var ballObj = Instantiate(ballPrefab);
-        ballObj.transform.position = ballSpawnPoint.position;
-        ballObj.transform.parent = ballSpawnPoint;
-        ballObj.transform.localRotation = Quaternion.identity;
+        var ballObj = Instantiate(ballPrefab, ballSpawnPoint.position, Quaternion.identity, ballSpawnPoint);
         currentBall = ballObj.GetComponentInChildren<BonkBall>();
         currentBall.OnLinkBall += OnLinkBall;
         ballList.Add(currentBall);
@@ -46,5 +43,16 @@ public class BallSpawner : MonoBehaviour
 
         // 返回最高的球
         return topBall;
+    }
+
+    public void ResetAllBall()
+    {
+        ballList.RemoveAll(x => !x && !x.Joint);
+        foreach (var bonkBall in ballList)
+        {
+            Destroy(bonkBall.gameObject);
+        }
+
+        ballList.Clear();
     }
 }

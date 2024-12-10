@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using DefaultNamespace;
 using UnityEngine;
@@ -11,12 +12,13 @@ public class GameManager : MonoBehaviour
     public UIManager uiManager;
     public Slider slider;
     public float gameTime = 30f;
-    
-    
+
+
     private float _timer = 0f;
 
     // singleton pattern
     public static GameManager instance;
+
     private void Awake()
     {
         if (instance == null)
@@ -29,14 +31,38 @@ public class GameManager : MonoBehaviour
         }
 
         GameStart();
+        TestLeaderboard();
+    }
+
+    private void TestLeaderboard()
+    {
+        uiManager.SetupLeaderBoard(new List<RankData>
+        {
+            new()
+            {
+                playerID = "1",
+                score = 1000,
+            },
+            new()
+            {
+                playerID = "2",
+                score = 500,
+            },
+            new()
+            {
+                playerID = "3",
+                score = 100,
+            },
+        });
     }
 
     private void GameStart()
     {
         spawner.onBallLink += CalculateScore;
         _timer = gameTime;
+        spawner.Spawn();
     }
-    
+
 
     public void SpawnBall()
     {
@@ -52,13 +78,14 @@ public class GameManager : MonoBehaviour
     {
         cameraFollow.RotateCamera(slider.value - 0.5f);
     }
+
     private void CalculateScore()
     {
         var bonkBall = spawner.GetTopBall();
         var positionY = bonkBall.transform.position.y + 5;
         var count = spawner.ballList.Count;
         var baseScore = count * positionY;
-        var timeFactor = gameTime - _timer; 
+        var timeFactor = gameTime - _timer;
         var finalScore = baseScore * timeFactor;
         uiManager.scoreText.text = $"{finalScore:0}";
         cameraFollow.ModifyPositionY(bonkBall.transform.position.y);

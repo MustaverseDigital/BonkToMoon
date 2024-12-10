@@ -11,12 +11,7 @@ public class BallSpawner : MonoBehaviour
     public List<BonkBall> ballList = new();
 
     public Action onBallLink;
-
-    void Start()
-    {
-        Spawn();
-    }
-
+    
     public void Spawn()
     {
         var ballObj = Instantiate(ballPrefab);

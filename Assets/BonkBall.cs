@@ -69,9 +69,9 @@ public class BonkBall : MonoBehaviour
             Joint.connectedBody = col.rigidbody;
         }
 
-        if (!col.gameObject.CompareTag("Ground"))
+        if (col.gameObject.CompareTag("Ground"))
         {
-            return;
+            Destroy(transform.root.gameObject, 2);
         }
     }
 

@@ -243,7 +243,7 @@ MonoBehaviour:
   cameraFollow: {fileID: 963194229}
   uiManager: {fileID: 936185151}
   slider: {fileID: 872886892}
-  gameTime: 30
+  gameTime: 60
 --- !u!4 &280288000
 Transform:
   m_ObjectHideFlags: 0
@@ -686,10 +686,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf2ecb63e5384d999e9266a59a161d77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  trialModeButton: {fileID: 7704929875221028792}
+  rankModeButton: {fileID: 2185600542469003274}
   scoreText: {fileID: 4456331608985883529}
   gameTimeText: {fileID: 7902946303606706053}
   gameTimeImage: {fileID: 8452929112227889028}
   exitButton: {fileID: 1193454205}
+  backButton: {fileID: 6088537539883852889}
+  itemPrefab: {fileID: 8010904800726529625, guid: 10eb10d5b65304926b1acc6253b4e9a7, type: 3}
+  itemGroup: {fileID: 4360313690617631065}
   menuPanel: {fileID: 4360313691052268689}
   gamePanel: {fileID: 138049523}
   enterPanel: {fileID: 8599065173007912144}

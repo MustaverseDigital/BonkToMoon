@@ -35,44 +35,50 @@ namespace DefaultNamespace
 
         private void LateUpdate()
         {
-            // 控制高度 (W/S)
             if (Input.GetKey(KeyCode.W))
             {
                 _currentHeight += moveSpeed * Time.deltaTime;
             }
+
             if (Input.GetKey(KeyCode.S))
             {
                 _currentHeight -= moveSpeed * Time.deltaTime;
             }
 
-            // 限制高度範圍
             _currentHeight = Mathf.Clamp(_currentHeight, 1f, 20f);
 
-            // 控制旋轉 (A/D)
             if (Input.GetKey(KeyCode.A))
             {
                 _currentAngle -= rotationSpeed * Time.deltaTime;
             }
+
             if (Input.GetKey(KeyCode.D))
             {
                 _currentAngle += rotationSpeed * Time.deltaTime;
             }
 
-            // 計算相機的位置
             float radians = _currentAngle * Mathf.Deg2Rad;
             float x = centerPoint.x + _radius * Mathf.Cos(radians);
             float z = centerPoint.z + _radius * Mathf.Sin(radians);
 
-            // 設定相機位置
-            transform.position = new Vector3(x, _currentHeight, z);
+            transform.position = Vector3.Lerp(transform.position, new Vector3(x, _currentHeight, z),
+                Time.deltaTime * 1.5f);
+            ;
 
-            // 設定相機始終面向中心點
-            transform.LookAt(new Vector3(centerPoint.x, _currentHeight-5, centerPoint.z));
+            transform.LookAt(new Vector3(centerPoint.x, _currentHeight - 5, centerPoint.z));
         }
 
         public void RotateCamera(float value)
         {
-            _currentAngle += rotationSpeed * value * Time.deltaTime;
+            _currentAngle += rotationSpeed * -value * Time.deltaTime;
+        }
+
+        public void ModifyPositionY(float positionY)
+        {
+            if (positionY > _currentHeight)
+            {
+                _currentHeight = positionY;
+            }
         }
     }
 }

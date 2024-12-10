@@ -65,8 +65,10 @@ public class BonkBall : MonoBehaviour
                 Joint = gameObject.AddComponent<FixedJoint>();
                 OnLinkBall?.Invoke();
             }
+
             Joint.connectedBody = col.rigidbody;
         }
+
         if (!col.gameObject.CompareTag("Ground"))
         {
             return;
@@ -109,6 +111,7 @@ public class BonkBall : MonoBehaviour
         var launchVector = (Camera.main.transform.forward + new Vector3(0, 1, 0)) * power;
         // 使用攝影機方向和計算出的速度
         rb.AddForce(launchVector * BallSpeed, ForceMode.Impulse);
+        rb.AddTorque(launchVector * (BallSpeed / 2), ForceMode.Impulse);
         rb.useGravity = true;
     }
 
@@ -123,6 +126,7 @@ public class BonkBall : MonoBehaviour
         {
             BallSpeed = MaxBallSpeed;
         }
+
         swipeTime = 0;
     }
 }

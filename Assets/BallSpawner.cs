@@ -1,49 +1,53 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class BallSpawner : MonoBehaviour
 {
-    public BonkBall ballPrefab;
+    public GameObject ballPrefab;
     public Transform ballSpawnPoint;
     private BonkBall currentBall;
-    private List<BonkBall> _ballList = new();
+    public List<BonkBall> ballList = new();
+
+    public Action onBallLink;
 
     void Start()
     {
-       Spawn();
-    }
-    
-    public void Spawn()
-    {
-        currentBall = Instantiate(ballPrefab);
-        currentBall.transform.position = ballSpawnPoint.position;
-        currentBall.transform.parent = ballSpawnPoint;
-        currentBall.OnLinkBall += CalculateScore;
-        _ballList.Add(currentBall);
+        Spawn();
     }
 
-    private void CalculateScore()
+    public void Spawn()
     {
-        var bonkBall = GetTopBall();
-        var positionY = bonkBall.transform.position.y;
-        var count = _ballList.Count;
-        Debug.Log($"ball Count : {count} higthest point {positionY}");
+        var ballObj = Instantiate(ballPrefab);
+        ballObj.transform.position = ballSpawnPoint.position;
+        ballObj.transform.parent = ballSpawnPoint;
+        ballObj.transform.localRotation = Quaternion.identity;
+        currentBall = ballObj.GetComponentInChildren<BonkBall>();
+        currentBall.OnLinkBall += OnLinkBall;
+        ballList.Add(currentBall);
     }
+
+    private void OnLinkBall()
+    {
+        onBallLink?.Invoke();
+        currentBall.OnLinkBall -= OnLinkBall;
+    }
+
 
     public BonkBall GetTopBall()
     {
         // 檢查清單是否為空
-        if (_ballList.Count == 0)
+        if (ballList.Count == 0)
         {
             return null;
         }
 
         // 移除列表中為 null 的物件
-        _ballList.RemoveAll(x => !x && !x.Joint);
+        ballList.RemoveAll(x => !x && !x.Joint);
 
         // 找到最高的那顆球
-        var topBall = _ballList.OrderByDescending(ball => ball.transform.position.y).FirstOrDefault();
+        var topBall = ballList.OrderByDescending(ball => ball.transform.position.y).FirstOrDefault();
 
         // 返回最高的球
         return topBall;

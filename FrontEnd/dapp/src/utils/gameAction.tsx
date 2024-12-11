@@ -5,10 +5,14 @@ import { TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from "@solana/spl-token";
 
 export const getLeaderboard = async (program: anchor.Program, leaderboardPda: PublicKey) => {
   const leaderboardAccount = await program.account.leaderboard.fetch(leaderboardPda);
-  console.log("Leaderboard Data:", {
-    prizePool: leaderboardAccount.prizePool.toString(),
-    players: leaderboardAccount.players,
-  });
+
+  const playersList = leaderboardAccount.players.map((player: any) => ({
+    name: player.name,
+    score: player.score,
+    address: player.address.toBase58(),
+  }));
+
+  return playersList;
 };
 
 export const addPrizePool = async (

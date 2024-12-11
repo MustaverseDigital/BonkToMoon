@@ -1,15 +1,32 @@
 "use client";
-import { useEffect, useState } from "react";
+import React, { FC, useMemo, useEffect, useState } from "react";
 import { Unity, useUnityContext } from "react-unity-webgl";
 import Image from "next/image";
 import bonktomoon from "/public/bonktomoon.png";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react"
-
+import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
+import { CONFIG } from "@/config/config";
+import { getProgram } from "@/utils/transaction";
+import { PublicKey } from "@solana/web3.js";
+import {
+  getLeaderboard,
+  addPrizePool,
+  startGame,
+  endGame,
+  claimPrize
+} from "@/utils/gameAction";
 
 const Game = () => {
+  const [leaderboard, setLeaderboard] = useState([]);
   const { publicKey } = useWallet();
   console.log(publicKey);
+
+  // some information for contract input
+  const playerName = "Kevin";
+  const addPoolAmount = 100;
+  const finalScore = 7000;
+
 
   const { unityProvider } = useUnityContext({
     loaderUrl: "/Build/GameBuild.loader.js",
@@ -18,10 +35,48 @@ const Game = () => {
     codeUrl: "/Build/GameBuild.wasm",
   });
 
+  //Get leaderboard
+  const fetchLeaderboard = async () => {
+    if (!program || !leaderboardPda) return;
+    try {
+      const playersList = await getLeaderboard(program, leaderboardPda);
+      setLeaderboard(playersList);
+      console.log("leaderboarddd!:", playersList)
+    } catch (error) {
+      console.error("Failed to fetch leaderboard:", error);
+    }
+  };
+  
+
   // We'll use a state to store the device pixel ratio.
   const [devicePixelRatio, setDevicePixelRatio] = useState(
     typeof window !== "undefined" ? window.devicePixelRatio : 1
   );
+
+  // contract connect part
+  const wallet = useAnchorWallet();
+  const { connection } = useConnection();
+  const { program } = getProgram(
+    connection,
+    wallet,
+    CONFIG.idl,
+    CONFIG.programId,
+    new PublicKey(CONFIG.ownerTokenAccount)
+  );
+  
+  const [leaderboardPda] = PublicKey.findProgramAddressSync(
+    [Buffer.from("leaderboard")],
+    program.programId
+  );
+
+  const [gameSessionPda] = useMemo(() => {
+    if (!wallet?.publicKey) return [null];
+    return PublicKey.findProgramAddressSync(
+      [Buffer.from("player_session"), wallet.publicKey.toBuffer()],
+      program.programId
+    );
+  }, [wallet, program.programId]);
+
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -56,6 +111,24 @@ const Game = () => {
             width={150}
             height={100}
           />
+          <button onClick={fetchLeaderboard}>
+            Get Leaderboard
+          </button>
+          <button onClick={() => addPrizePool(program, leaderboardPda, wallet, addPoolAmount)}>
+            Add Prize Pool
+          </button>
+          <button
+            onClick={() =>
+              startGame(program, leaderboardPda, gameSessionPda, wallet, playerName)
+            }>
+            Start Game
+          </button>
+          <button onClick={() => endGame(program, leaderboardPda, gameSessionPda, wallet, finalScore)}>
+            End Game
+          </button>
+          <button onClick={() => claimPrize(program, leaderboardPda,  wallet)}>
+            claim Prize
+          </button>
         </div>
         <WalletMultiButton style={{ backgroundColor: '#121214', borderRadius: '40px' }} />
       </div>

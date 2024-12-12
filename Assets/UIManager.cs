@@ -99,13 +99,15 @@ namespace DefaultNamespace
 
         public void SetCompletePanelData(PlayerData data)
         {
-            playerIDText.text = data.playerID;
+            var playerID = data.playerID;
+            var shortenedID = playerID[..4] + "..." + playerID[^4..];
+            playerIDText.text = shortenedID;
             if (data.sprite != null)
             {
                 avatarImage.sprite = data.sprite;
             }
             scoreResultText.text = data.score.ToString();
-            rankText.text = data.rank.ToString();
+            rankText.text = data.rank < 0 ? "UnRanked" : data.rank.ToString();
         }
     }
 }

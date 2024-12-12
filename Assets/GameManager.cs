@@ -154,6 +154,7 @@ public class GameManager : MonoBehaviour
     {
         spawner.onBallLink -= CalculateScore;
         spawner.ResetAllBall();
+        playerData.rank = playerData.rank = _rankData.FindIndex(r => r.playerID == playerData.playerID);
         uiManager.SetCompletePanelData(playerData);
         uiManager.OpenPanel("Complete");
         _inGame = false;

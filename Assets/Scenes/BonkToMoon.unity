@@ -659,7 +659,7 @@ GameObject:
   - component: {fileID: 911539372}
   - component: {fileID: 911539371}
   m_Layer: 0
-  m_Name: reactBridge
+  m_Name: ReactBridge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -169,7 +169,7 @@ public class GameManager : MonoBehaviour
     private static extern void StartRank();
 
     [DllImport("__Internal")]
-    private static extern void EndGame(string score);
+    private static extern void EndGame(int score);
 }
 
 [System.Serializable]

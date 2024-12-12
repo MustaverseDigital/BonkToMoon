@@ -15,15 +15,15 @@ public class GameManager : MonoBehaviour
 
 
     private float _timer = 0f;
-    
+
     public PlayerData playerData = new();
     private bool _inGame = false;
     private List<RankData> _rankData = new();
-    
+
 
     // singleton pattern
     public static GameManager instance;
-    
+
     public void SetUser(string address)
     {
         playerData.playerID = address;
@@ -51,6 +51,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogWarning($"Failed to parse leaderboard data. {json}");
         }
+
         uiManager.SetupLeaderBoard(_rankData);
     }
 
@@ -64,7 +65,7 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        
+
         SetupButton();
         MenuStart();
     }
@@ -79,7 +80,6 @@ public class GameManager : MonoBehaviour
         uiManager.leaderBoardButton.onClick.AddListener(RefreshLeaderboard);
         uiManager.tryTrialButton.onClick.AddListener(() => GameStart(false));
         uiManager.tryRankButton.onClick.AddListener(() => GameStart(true));
-        
     }
 
     private void MenuStart()
@@ -96,9 +96,13 @@ public class GameManager : MonoBehaviour
     {
         if (ranking)
         {
-            SendMessageToReact("StartRank");
+            Debug.Log("Send string");
+#if UNITY_WEBGL == true && UNITY_EDITOR == false
+        StartRank();
+        Debug.Log("start Rank");
+#endif
         }
-        
+
         uiManager.OpenPanel("Game");
         spawner.onBallLink += CalculateScore;
         _timer = gameTime;
@@ -131,7 +135,7 @@ public class GameManager : MonoBehaviour
         var timeFactor = gameTime - _timer;
         var finalScore = baseScore * timeFactor;
         uiManager.scoreText.text = $"{finalScore:0}";
-        playerData.score = (int) finalScore;
+        playerData.score = (int)finalScore;
         cameraFollow.ModifyPositionY(bonkBall.transform.position.y);
     }
 
@@ -154,17 +158,19 @@ public class GameManager : MonoBehaviour
         uiManager.OpenPanel("Complete");
         _inGame = false;
 
-        var boardData = new PlayerBoardData();
-        boardData.player = playerData.playerID;
-        boardData.score = playerData.score;
-        var jsonData = JsonUtility.ToJson(boardData);
-        SendMessageToReact($"EndGame{jsonData}");
+#if UNITY_WEBGL == true && UNITY_EDITOR == false
+    EndGame (playerData.score); 
+    Debug.Log(playerData.score);
+#endif
     }
 
     [DllImport("__Internal")]
-    private static extern void SendMessageToReact(string message);
-    
+    private static extern void StartRank();
+
+    [DllImport("__Internal")]
+    private static extern void EndGame(string score);
 }
+
 [System.Serializable]
 public class PlayerData
 {
@@ -173,6 +179,7 @@ public class PlayerData
     public Sprite sprite;
     public int rank;
 }
+
 [System.Serializable]
 public class PlayerBoardData
 {

@@ -15,11 +15,13 @@ namespace DefaultNamespace
         public void SetupBoardItem(RankData data)
         {
             scoreText.text = data.score.ToString();
+            var playerID = data.playerID;
             if (data.avatar != null)
             {
                 avatarImage.sprite = data.avatar;
             }
-            walletIDText.text = data.playerID;
+            var shortenedID = playerID[..4] + "..." + playerID[^4..];
+            walletIDText.text = shortenedID;
             messageText.text = data.message ?? "Bonk to Moon!!!!";
         }
     }

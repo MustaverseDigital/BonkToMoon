@@ -27,43 +27,21 @@ const Game = () => {
   const finalScore = 7000;
 
   const { unityProvider, sendMessage } = useUnityContext({
-    loaderUrl: "/Build/GameBuild.loader.js",
-    dataUrl: "/Build/GameBuild.data",
-    frameworkUrl: "/Build/GameBuild.framework.js",
-    codeUrl: "/Build/GameBuild.wasm",
+    loaderUrl: "/Build/docs.loader.js",
+    dataUrl: "/Build/docs.data",
+    frameworkUrl: "/Build/docs.framework.js",
+    codeUrl: "/Build/docs.wasm",
   });
-
-  const handleStartRank = () => {
-    startGame(program, leaderboardPda, gameSessionPda, wallet, playerName);
-  };
-
-  useEffect(() => {
-    // Add an event listener to the window to listen for the startGame
-    addEventListener("StartRank", handleStartRank);
-    return () => {
-      removeEventListener("StartRank", handleStartRank);
-    };
-  }, [addEventListener, removeEventListener, handleStartRank]);
-
-  const handleEndGame = () => {
-    endGame(program, leaderboardPda, gameSessionPda, wallet, finalScore);
-  };
-
-  useEffect(() => {
-    addEventListener("EndGame", handleEndGame);
-    return () => {
-      removeEventListener("EndGame", handleEndGame);
-    };
-  }, [addEventListener, removeEventListener, handleEndGame]);
 
   //Get leaderboard
   const fetchLeaderboard = async () => {
     if (!program || !leaderboardPda) return;
     try {
       const playersList = await getLeaderboard(program, leaderboardPda);
+      const playersListString = JSON.stringify(playersList);
       setLeaderboard(playersList);
-      sendMessage("ReactBridge", "sendLeaderboard", playersList);
-      console.log("leaderboarddd!:", playersList);
+      console.log("leaderboarddd!:", playersListString);
+      sendMessage("ReactBridge", "sendLeaderboard", playersListString);
     } catch (error) {
       console.error("Failed to fetch leaderboard:", error);
     }
@@ -84,6 +62,8 @@ const Game = () => {
     CONFIG.programId,
     new PublicKey(CONFIG.ownerTokenAccount)
   );
+
+  sendMessage("ReactBridge", "sendAddress", wallet?.publicKey?.toBase58());
 
   const [leaderboardPda] = PublicKey.findProgramAddressSync(
     [Buffer.from("leaderboard")],
@@ -118,6 +98,29 @@ const Game = () => {
       mediaMatcher.removeEventListener("change", updateDevicePixelRatio);
     };
   }, [devicePixelRatio]);
+
+  useEffect(() => {
+    const handleStartRank = () => {
+      console.log("StartRank");
+      startGame(program, leaderboardPda, gameSessionPda, wallet, playerName);
+    };
+    // Add an event listener to the window to listen for the startGame
+    addEventListener("StartRank", handleStartRank);
+    return () => {
+      removeEventListener("StartRank", handleStartRank);
+    };
+  }, [gameSessionPda, leaderboardPda, playerName, program, wallet]);
+
+  useEffect(() => {
+    const handleEndGame = () => {
+      endGame(program, leaderboardPda, gameSessionPda, wallet, finalScore);
+    };
+
+    addEventListener("EndGame", handleEndGame);
+    return () => {
+      removeEventListener("EndGame", handleEndGame);
+    };
+  }, [gameSessionPda, leaderboardPda, program, wallet]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-sky-100">

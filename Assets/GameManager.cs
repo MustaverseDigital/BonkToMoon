@@ -51,6 +51,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogWarning($"Failed to parse leaderboard data. {json}");
         }
+        uiManager.SetupLeaderBoard(_rankData);
     }
 
     private void Awake()
@@ -88,25 +89,6 @@ public class GameManager : MonoBehaviour
 
     private void RefreshLeaderboard()
     {
-        //todo TestData need to change to real one 
-        uiManager.SetupLeaderBoard(new List<RankData>
-        {
-            new()
-            {
-                playerID = "1",
-                score = 1000,
-            },
-            new()
-            {
-                playerID = "2",
-                score = 500,
-            },
-            new()
-            {
-                playerID = "3",
-                score = 100,
-            },
-        });
         uiManager.OpenPanel("Ranking");
     }
 

@@ -1,20 +1,18 @@
 "use client";
-import React, { FC, useMemo, useEffect, useState } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import { Unity, useUnityContext } from "react-unity-webgl";
 import Image from "next/image";
 import bonktomoon from "/public/bonktomoon.png";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
+import { useAnchorWallet, useConnection, AnchorWallet } from "@solana/wallet-adapter-react";
 import { CONFIG } from "@/config/config";
 import { getProgram } from "@/utils/transaction";
 import { PublicKey } from "@solana/web3.js";
 import {
   getLeaderboard,
-  addPrizePool,
   startGame,
   endGame,
-  claimPrize,
 } from "@/utils/gameAction";
 
 const Game = () => {
@@ -26,7 +24,7 @@ const Game = () => {
   const addPoolAmount = 100;
   const finalScore = 7000;
 
-  const { unityProvider, sendMessage } = useUnityContext({
+  const { unityProvider, sendMessage, isLoaded } = useUnityContext({
     loaderUrl: "/Build/docs.loader.js",
     dataUrl: "/Build/docs.data",
     frameworkUrl: "/Build/docs.framework.js",
@@ -41,6 +39,7 @@ const Game = () => {
       const playersListString = JSON.stringify(playersList);
       setLeaderboard(playersList);
       console.log("leaderboarddd!:", playersListString);
+      console.log('leaderboard', leaderboard);
       sendMessage("ReactBridge", "sendLeaderboard", playersListString);
     } catch (error) {
       console.error("Failed to fetch leaderboard:", error);
@@ -53,7 +52,7 @@ const Game = () => {
   );
 
   // contract connect part
-  const wallet = useAnchorWallet();
+  const wallet = useAnchorWallet() as AnchorWallet;
   const { connection } = useConnection();
   const { program } = getProgram(
     connection,
@@ -80,21 +79,16 @@ const Game = () => {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    // A function which will update the device pixel ratio of the Unity
-    // Application to match the device pixel ratio of the browser.
+
     const updateDevicePixelRatio = () => {
       setDevicePixelRatio(window.devicePixelRatio);
     };
-    // A media matcher which watches for changes in the device pixel ratio.
     const mediaMatcher = window.matchMedia(
       `screen and (resolution: ${devicePixelRatio}dppx)`
     );
-    // Adding an event listener to the media matcher which will update the
-    // device pixel ratio of the Unity Application when the device pixel
-    // ratio changes.
+
     mediaMatcher.addEventListener("change", updateDevicePixelRatio);
     return () => {
-      // Removing the event listener when the component unmounts.
       mediaMatcher.removeEventListener("change", updateDevicePixelRatio);
     };
   }, [devicePixelRatio]);
@@ -102,7 +96,8 @@ const Game = () => {
   useEffect(() => {
     const handleStartRank = () => {
       console.log("StartRank");
-      startGame(program, leaderboardPda, gameSessionPda, wallet, playerName);
+      if (!program || !leaderboardPda || !gameSessionPda || !wallet || !playerName) return;
+      startGame(program, leaderboardPda, gameSessionPda as PublicKey, wallet, playerName);
     };
     // Add an event listener to the window to listen for the startGame
     addEventListener("StartRank", handleStartRank);
@@ -113,7 +108,7 @@ const Game = () => {
 
   useEffect(() => {
     const handleEndGame = () => {
-      endGame(program, leaderboardPda, gameSessionPda, wallet, finalScore);
+      endGame(program, leaderboardPda, gameSessionPda as PublicKey, wallet, finalScore);
     };
 
     addEventListener("EndGame", handleEndGame);
@@ -122,66 +117,58 @@ const Game = () => {
     };
   }, [gameSessionPda, leaderboardPda, program, wallet]);
 
+  const [containerStyle, setContainerStyle] = useState({});
+
+  useEffect(() => {
+    const handleResize = () => {
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+      const aspectRatio = 9 / 14; // 您的遊戲的長寬比
+
+      let width, height;
+      if (screenWidth / screenHeight > aspectRatio) {
+        // 高度適配
+        height = "100vh";
+        width = `${(screenHeight * aspectRatio).toFixed(2)}px`;
+      } else {
+        // 寬度適配
+        width = "100vw";
+        height = `${(screenWidth / aspectRatio).toFixed(2)}px`;
+      }
+
+      setContainerStyle({
+        position: "relative",
+        width,
+        height,
+      });
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    console.log('isLoaded', isLoaded)
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isLoaded]);
+
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-sky-100">
       {/* Top Bar */}
-      <div className="flex justify-between items-center w-full p-2 bg-[#FC7F18]">
+      <div className="fixed top-0 flex justify-between items-center w-full p-2 bg-[#FC7F18]">
         <div className="flex items-center justify-evenly gap-3">
           <Image src={bonktomoon} alt="bonktomoon" width={150} height={100} />
-          <button onClick={fetchLeaderboard}>Get Leaderboard</button>
-          <button
-            onClick={() =>
-              addPrizePool(program, leaderboardPda, wallet, addPoolAmount)
-            }
-          >
-            Add Prize Pool
-          </button>
-          <button
-            onClick={() =>
-              startGame(
-                program,
-                leaderboardPda,
-                gameSessionPda,
-                wallet,
-                playerName
-              )
-            }
-          >
-            Start Game
-          </button>
-          <button
-            onClick={() =>
-              endGame(
-                program,
-                leaderboardPda,
-                gameSessionPda,
-                wallet,
-                finalScore
-              )
-            }
-          >
-            End Game
-          </button>
-          <button onClick={() => claimPrize(program, leaderboardPda, wallet)}>
-            claim Prize
-          </button>
         </div>
         <WalletMultiButton
           style={{ backgroundColor: "#121214", borderRadius: "40px" }}
         />
       </div>
 
-      <div className="relative w-full h-auto">
+      <div className="relative w-auto h-auto">
         <Unity
           unityProvider={unityProvider}
-          style={{
-            height: "calc(100vh - 64px)",
-            width: "100%",
-          }}
+          style={containerStyle}
           devicePixelRatio={devicePixelRatio}
         />
       </div>
-      <audio src="/bgm.mp3" muted={false} autoPlay loop />
     </div>
   );
 };

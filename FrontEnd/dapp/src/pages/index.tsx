@@ -143,38 +143,6 @@ const Game = () => {
     };
   }, [gameSessionPda, handleEndGame, leaderboardPda, program, wallet]);
 
-  const [containerStyle, setContainerStyle] = useState({});
-
-  useEffect(() => {
-    const handleResize = () => {
-      const screenWidth = window.innerWidth;
-      const screenHeight = window.innerHeight;
-      const aspectRatio = 9 / 14; // 您的遊戲的長寬比
-
-      let width, height;
-      if (screenWidth / screenHeight > aspectRatio) {
-        // 高度適配
-        height = "100vh";
-        width = `${(screenHeight * aspectRatio).toFixed(2)}px`;
-      } else {
-        // 寬度適配
-        width = "100vw";
-        height = `${(screenWidth / aspectRatio).toFixed(2)}px`;
-      }
-
-      setContainerStyle({
-        position: "relative",
-        width,
-        height,
-      });
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    console.log("isLoaded", isLoaded);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [isLoaded]);
-
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-sky-100">
       {/* Top Bar */}
@@ -190,7 +158,10 @@ const Game = () => {
       <div className="relative w-auto h-auto">
         <Unity
           unityProvider={unityProvider}
-          style={containerStyle}
+          style={{
+            height: "calc(100vh - 10rem)",
+            width: "100vw",
+          }}
           devicePixelRatio={devicePixelRatio}
         />
       </div>

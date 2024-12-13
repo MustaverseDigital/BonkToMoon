@@ -7,11 +7,11 @@ export const getLeaderboard = async (
   program: anchor.Program,
   leaderboardPda: PublicKey
 ) => {
-  const leaderboardAccount = await program.account.leaderboard.fetch(
+  const leaderboardAccount = (await program.account.leaderboard.fetch(
     leaderboardPda
-  );
+  )) as { players: { name: string; score: number; address: PublicKey }[] };
 
-  const playersList = leaderboardAccount.players.map((player: any) => ({
+  const playersList = leaderboardAccount.players.map((player) => ({
     name: player.name,
     score: player.score,
     address: player.address.toBase58(),
@@ -30,11 +30,11 @@ export const addPrizePool = async (
     leaderboardPda
   );
   const contributorTokenAccount = await getAssociatedTokenAddress(
-    leaderboardAccount.tokenMint,
+    leaderboardAccount.tokenMint as PublicKey,
     wallet.publicKey
   );
   const tokenPoolAccount = await getAssociatedTokenAddress(
-    leaderboardAccount.tokenMint,
+    leaderboardAccount.tokenMint as PublicKey,
     leaderboardPda,
     true
   );
@@ -68,11 +68,11 @@ export const startGame = async (
     leaderboardPda
   );
   const contributorTokenAccount = await getAssociatedTokenAddress(
-    leaderboardAccount.tokenMint,
+    leaderboardAccount.tokenMint as PublicKey,
     wallet.publicKey
   );
   const tokenPoolAccount = await getAssociatedTokenAddress(
-    leaderboardAccount.tokenMint,
+    leaderboardAccount.tokenMint as PublicKey,
     leaderboardPda,
     true
   );
@@ -127,11 +127,11 @@ export const claimPrize = async (
     leaderboardPda
   );
   const contributorTokenAccount = await getAssociatedTokenAddress(
-    leaderboardAccount.tokenMint,
+    leaderboardAccount.tokenMint as PublicKey,
     wallet.publicKey
   );
   const tokenPoolAccount = await getAssociatedTokenAddress(
-    leaderboardAccount.tokenMint,
+    leaderboardAccount.tokenMint as PublicKey,
     leaderboardPda,
     true
   );

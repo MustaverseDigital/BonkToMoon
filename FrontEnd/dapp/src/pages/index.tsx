@@ -16,28 +16,25 @@ import { PublicKey } from "@solana/web3.js";
 import { getLeaderboard, startGame, endGame } from "@/utils/gameAction";
 
 const Game = () => {
-  const [leaderboard, setLeaderboard] = useState([]);
+  const [leaderboard, setLeaderboard] = useState<
+    { name: string; score: number; address: string }[]
+  >([]);
   const { publicKey } = useWallet();
   console.log(publicKey?.toBase58());
 
-  const playerName = publicKey?.toBase58().slice(0, 5);
-  const addPoolAmount = 100;
+  const playerName = publicKey?.toBase58().slice(0, 5) || "Guest";
   const finalScore = 7000;
 
-  const {
-    unityProvider,
-    isLoaded,
-    sendMessage,
-    addEventListener,
-    removeEventListener,
-  } = useUnityContext({
-    loaderUrl: "/Build/docs.loader.js",
-    dataUrl: "/Build/docs.data",
-    frameworkUrl: "/Build/docs.framework.js",
-    codeUrl: "/Build/docs.wasm",
-  });
+  const { unityProvider, sendMessage, addEventListener, removeEventListener } =
+    useUnityContext({
+      loaderUrl: "/Build/docs.loader.js",
+      dataUrl: "/Build/docs.data",
+      frameworkUrl: "/Build/docs.framework.js",
+      codeUrl: "/Build/docs.wasm",
+    });
 
   //Get leaderboard
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchLeaderboard = async () => {
     if (!program || !leaderboardPda) return;
     try {
@@ -110,7 +107,14 @@ const Game = () => {
         sendMessage("ReactBridge", "startGameRank");
       }
     );
-  }, [gameSessionPda, leaderboardPda, playerName, program, wallet]);
+  }, [
+    gameSessionPda,
+    leaderboardPda,
+    playerName,
+    program,
+    sendMessage,
+    wallet,
+  ]);
 
   useEffect(() => {
     // Add an event listener to the window to listen for the startGame
@@ -119,11 +123,13 @@ const Game = () => {
       removeEventListener("StartRank", handleStartRank);
     };
   }, [
+    addEventListener,
     gameSessionPda,
     handleStartRank,
     leaderboardPda,
     playerName,
     program,
+    removeEventListener,
     wallet,
   ]);
 
@@ -144,7 +150,15 @@ const Game = () => {
     return () => {
       removeEventListener("EndGame", handleEndGame);
     };
-  }, [gameSessionPda, handleEndGame, leaderboardPda, program, wallet]);
+  }, [
+    addEventListener,
+    gameSessionPda,
+    handleEndGame,
+    leaderboardPda,
+    program,
+    removeEventListener,
+    wallet,
+  ]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-sky-100">

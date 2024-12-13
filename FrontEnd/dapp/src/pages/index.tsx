@@ -105,7 +105,10 @@ const Game = () => {
       leaderboardPda,
       gameSessionPda as PublicKey,
       wallet,
-      playerName
+      playerName,
+      () => {
+        sendMessage("ReactBridge", "startGameRank");
+      }
     );
   }, [gameSessionPda, leaderboardPda, playerName, program, wallet]);
 

@@ -3,8 +3,13 @@ import * as anchor from "@coral-xyz/anchor";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
 import { TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from "@solana/spl-token";
 
-export const getLeaderboard = async (program: anchor.Program, leaderboardPda: PublicKey) => {
-  const leaderboardAccount = await program.account.leaderboard.fetch(leaderboardPda);
+export const getLeaderboard = async (
+  program: anchor.Program,
+  leaderboardPda: PublicKey
+) => {
+  const leaderboardAccount = await program.account.leaderboard.fetch(
+    leaderboardPda
+  );
 
   const playersList = leaderboardAccount.players.map((player: any) => ({
     name: player.name,
@@ -21,7 +26,9 @@ export const addPrizePool = async (
   wallet: AnchorWallet,
   amount: number
 ) => {
-  const leaderboardAccount = await program.account.leaderboard.fetch(leaderboardPda);
+  const leaderboardAccount = await program.account.leaderboard.fetch(
+    leaderboardPda
+  );
   const contributorTokenAccount = await getAssociatedTokenAddress(
     leaderboardAccount.tokenMint,
     wallet.publicKey
@@ -54,9 +61,12 @@ export const startGame = async (
   leaderboardPda: PublicKey,
   gameSessionPda: PublicKey,
   wallet: AnchorWallet,
-  gameName: string
+  gameName: string,
+  callback: () => void
 ) => {
-  const leaderboardAccount = await program.account.leaderboard.fetch(leaderboardPda);
+  const leaderboardAccount = await program.account.leaderboard.fetch(
+    leaderboardPda
+  );
   const contributorTokenAccount = await getAssociatedTokenAddress(
     leaderboardAccount.tokenMint,
     wallet.publicKey
@@ -84,6 +94,7 @@ export const startGame = async (
     .rpc();
 
   console.log("Start game Transaction:", tx);
+  callback();
 };
 
 export const endGame = async (
@@ -93,6 +104,7 @@ export const endGame = async (
   wallet: AnchorWallet,
   score: number
 ) => {
+  console.log("leaderboardPda:" + leaderboardPda.toString());
   const tx = await program.methods
     .endGame(new anchor.BN(score))
     .accounts({
@@ -109,10 +121,11 @@ export const endGame = async (
 export const claimPrize = async (
   program: anchor.Program,
   leaderboardPda: PublicKey,
-  wallet: AnchorWallet,
+  wallet: AnchorWallet
 ) => {
-  
-  const leaderboardAccount = await program.account.leaderboard.fetch(leaderboardPda);
+  const leaderboardAccount = await program.account.leaderboard.fetch(
+    leaderboardPda
+  );
   const contributorTokenAccount = await getAssociatedTokenAddress(
     leaderboardAccount.tokenMint,
     wallet.publicKey

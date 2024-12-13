@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     public PlayerData playerData = new();
     private bool _inGame = false;
     private List<RankData> _rankData = new();
+    private bool _rankMode = false;
 
 
     // singleton pattern
@@ -74,7 +75,13 @@ public class GameManager : MonoBehaviour
     {
         uiManager.trialModeButton.onClick.AddListener(() => GameStart(false));
         uiManager.rankModeButton.onClick.AddListener(() => GameStart(true));
-        uiManager.gameExitButton.onClick.AddListener(() => { uiManager.OpenPanel("Menu"); });
+        uiManager.gameExitButton.onClick.AddListener(() =>
+        {
+            spawner.onBallLink -= CalculateScore;
+            spawner.ResetAllBall();
+            _inGame = false;
+            uiManager.OpenPanel("Menu");
+        });
         uiManager.rankBackButton.onClick.AddListener(() => { uiManager.OpenPanel("Complete"); });
         uiManager.completeExitButton.onClick.AddListener(() => { uiManager.OpenPanel("Menu"); });
         uiManager.leaderBoardButton.onClick.AddListener(RefreshLeaderboard);
@@ -96,13 +103,24 @@ public class GameManager : MonoBehaviour
     {
         if (ranking)
         {
+            _rankMode = true;
             Debug.Log("Send string");
 #if UNITY_WEBGL == true && UNITY_EDITOR == false
         StartRank();
         Debug.Log("start Rank");
 #endif
+            return;
         }
+        _rankMode = false;
+        uiManager.OpenPanel("Game");
+        spawner.onBallLink += CalculateScore;
+        _timer = gameTime;
+        spawner.Spawn();
+        _inGame = true;
+    }
 
+    public void ContinueStartRank()
+    {
         uiManager.OpenPanel("Game");
         spawner.onBallLink += CalculateScore;
         _timer = gameTime;
@@ -158,7 +176,7 @@ public class GameManager : MonoBehaviour
         uiManager.SetCompletePanelData(playerData);
         uiManager.OpenPanel("Complete");
         _inGame = false;
-
+        if(!_rankMode) return;
 #if UNITY_WEBGL == true && UNITY_EDITOR == false
     EndGame (playerData.score); 
     Debug.Log(playerData.score);

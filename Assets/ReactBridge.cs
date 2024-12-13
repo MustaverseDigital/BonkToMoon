@@ -13,5 +13,10 @@ namespace DefaultNamespace
         {
             GameManager.instance.SetLeaderBoardData(dataString);
         }
+
+        public void startGameRank()
+        {
+            GameManager.instance.ContinueStartRank();
+        }
     }
 }

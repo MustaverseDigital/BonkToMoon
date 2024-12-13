@@ -1,19 +1,19 @@
 "use client";
-import React, { useMemo, useEffect, useState } from "react";
+import React, { useMemo, useEffect, useState, useCallback } from "react";
 import { Unity, useUnityContext } from "react-unity-webgl";
 import Image from "next/image";
 import bonktomoon from "/public/bonktomoon.png";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useAnchorWallet, useConnection, AnchorWallet } from "@solana/wallet-adapter-react";
+import {
+  useAnchorWallet,
+  useConnection,
+  AnchorWallet,
+} from "@solana/wallet-adapter-react";
 import { CONFIG } from "@/config/config";
 import { getProgram } from "@/utils/transaction";
 import { PublicKey } from "@solana/web3.js";
-import {
-  getLeaderboard,
-  startGame,
-  endGame,
-} from "@/utils/gameAction";
+import { getLeaderboard, startGame, endGame } from "@/utils/gameAction";
 
 const Game = () => {
   const [leaderboard, setLeaderboard] = useState([]);
@@ -24,7 +24,13 @@ const Game = () => {
   const addPoolAmount = 100;
   const finalScore = 7000;
 
-  const { unityProvider, sendMessage, isLoaded } = useUnityContext({
+  const {
+    unityProvider,
+    isLoaded,
+    sendMessage,
+    addEventListener,
+    removeEventListener,
+  } = useUnityContext({
     loaderUrl: "/Build/docs.loader.js",
     dataUrl: "/Build/docs.data",
     frameworkUrl: "/Build/docs.framework.js",
@@ -39,7 +45,7 @@ const Game = () => {
       const playersListString = JSON.stringify(playersList);
       setLeaderboard(playersList);
       console.log("leaderboarddd!:", playersListString);
-      console.log('leaderboard', leaderboard);
+      console.log("leaderboard", leaderboard);
       sendMessage("ReactBridge", "sendLeaderboard", playersListString);
     } catch (error) {
       console.error("Failed to fetch leaderboard:", error);
@@ -93,29 +99,49 @@ const Game = () => {
     };
   }, [devicePixelRatio]);
 
+  const handleStartRank = useCallback(() => {
+    startGame(
+      program,
+      leaderboardPda,
+      gameSessionPda as PublicKey,
+      wallet,
+      playerName
+    );
+  }, [gameSessionPda, leaderboardPda, playerName, program, wallet]);
+
   useEffect(() => {
-    const handleStartRank = () => {
-      console.log("StartRank");
-      if (!program || !leaderboardPda || !gameSessionPda || !wallet || !playerName) return;
-      startGame(program, leaderboardPda, gameSessionPda as PublicKey, wallet, playerName);
-    };
     // Add an event listener to the window to listen for the startGame
     addEventListener("StartRank", handleStartRank);
     return () => {
       removeEventListener("StartRank", handleStartRank);
     };
-  }, [gameSessionPda, leaderboardPda, playerName, program, wallet]);
+  }, [
+    gameSessionPda,
+    handleStartRank,
+    leaderboardPda,
+    playerName,
+    program,
+    wallet,
+  ]);
+
+  const handleEndGame = useCallback(() => {
+    endGame(
+      program,
+      leaderboardPda,
+      gameSessionPda as PublicKey,
+      wallet,
+      finalScore
+    );
+
+    fetchLeaderboard();
+  }, [fetchLeaderboard, gameSessionPda, leaderboardPda, program, wallet]);
 
   useEffect(() => {
-    const handleEndGame = () => {
-      endGame(program, leaderboardPda, gameSessionPda as PublicKey, wallet, finalScore);
-    };
-
     addEventListener("EndGame", handleEndGame);
     return () => {
       removeEventListener("EndGame", handleEndGame);
     };
-  }, [gameSessionPda, leaderboardPda, program, wallet]);
+  }, [gameSessionPda, handleEndGame, leaderboardPda, program, wallet]);
 
   const [containerStyle, setContainerStyle] = useState({});
 
@@ -145,10 +171,9 @@ const Game = () => {
 
     handleResize();
     window.addEventListener("resize", handleResize);
-    console.log('isLoaded', isLoaded)
+    console.log("isLoaded", isLoaded);
     return () => window.removeEventListener("resize", handleResize);
   }, [isLoaded]);
-
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-sky-100">

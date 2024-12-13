@@ -176,7 +176,8 @@ public class GameManager : MonoBehaviour
         uiManager.SetCompletePanelData(playerData);
         uiManager.OpenPanel("Complete");
         _inGame = false;
-        if(!_rankMode) return;
+        cameraFollow.ResetCamera();
+        if (!_rankMode) return;
 #if UNITY_WEBGL == true && UNITY_EDITOR == false
     EndGame (playerData.score); 
     Debug.Log(playerData.score);

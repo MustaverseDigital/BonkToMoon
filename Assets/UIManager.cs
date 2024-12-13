@@ -43,7 +43,7 @@ namespace DefaultNamespace
                 Destroy(child.gameObject);
             }
 
-            
+
             Sprite[] rankSprites = { rank1, rank2, rank3 };
             //re add all data 
             for (var index = 0; index < rankingData.Count; index++)
@@ -93,8 +93,8 @@ namespace DefaultNamespace
 
         public void SetGameTime(float time)
         {
-            gameTimeText.text = $"{time:0.0}";
-            gameTimeImage.fillAmount = time / 30f;
+            gameTimeText.text = $"{time:0}";
+            gameTimeImage.fillAmount = time / 60f;
         }
 
         public void SetCompletePanelData(PlayerData data)

@@ -45,7 +45,7 @@ namespace DefaultNamespace
                 _currentHeight -= moveSpeed * Time.deltaTime;
             }
 
-            _currentHeight = Mathf.Clamp(_currentHeight, 1f, 20f);
+            _currentHeight = Mathf.Clamp(_currentHeight, 1f, 200f);
 
             if (Input.GetKey(KeyCode.A))
             {
@@ -61,11 +61,9 @@ namespace DefaultNamespace
             float x = centerPoint.x + _radius * Mathf.Cos(radians);
             float z = centerPoint.z + _radius * Mathf.Sin(radians);
 
-            transform.position = Vector3.Lerp(transform.position, new Vector3(x, _currentHeight, z),
-                Time.deltaTime * 1.5f);
-            ;
+            transform.position = Vector3.Lerp(transform.position, new Vector3(x, _currentHeight + 3, z), Time.deltaTime / 2f);
 
-            transform.LookAt(new Vector3(centerPoint.x, _currentHeight - 5, centerPoint.z));
+            transform.LookAt(new Vector3(centerPoint.x, _currentHeight - 3, centerPoint.z));
         }
 
         public void RotateCamera(float value)
@@ -79,6 +77,12 @@ namespace DefaultNamespace
             {
                 _currentHeight = positionY;
             }
+        }
+
+        public void ResetCamera()
+        {
+            _currentAngle = 0f;
+            _currentHeight = 5f;
         }
     }
 }

@@ -17,8 +17,8 @@ public class BonkBall : MonoBehaviour
     private Vector3 newPosition, resetPos;
     private Rigidbody rb;
     public FixedJoint Joint;
-
     public Action OnLinkBall;
+    private bool isShooted = false;
 
     // Start is called before the first frame update
     void Start()
@@ -36,11 +36,20 @@ public class BonkBall : MonoBehaviour
 
     private void OnMouseDrag()
     {
+        if (isShooted)
+        {
+            return;
+        }
         PickupBall();
     }
 
     private void OnMouseUp()
     {
+        if (isShooted)
+        {
+            return;
+        }
+
         endTime = Time.time;
         endPos = Input.mousePosition;
         swipeDistance = (endPos - startPos).magnitude;
@@ -58,7 +67,7 @@ public class BonkBall : MonoBehaviour
 
     private void OnCollisionEnter(Collision col)
     {
-        if (col.gameObject.CompareTag("Player"))
+        if (col.gameObject.CompareTag("Player") && isShooted)
         {
             if (Joint == null)
             {
@@ -67,6 +76,8 @@ public class BonkBall : MonoBehaviour
             }
 
             Joint.connectedBody = col.rigidbody;
+            rb.isKinematic = true;
+            this.gameObject.tag = "Player";
         }
 
         if (col.gameObject.CompareTag("Ground"))
@@ -115,6 +126,7 @@ public class BonkBall : MonoBehaviour
         rb.AddForce(launchVector * BallSpeed, ForceMode.Impulse);
         rb.AddTorque(launchVector * (BallSpeed / 2), ForceMode.Impulse);
         rb.useGravity = true;
+        isShooted = true;
     }
 
     void CalSpeed()

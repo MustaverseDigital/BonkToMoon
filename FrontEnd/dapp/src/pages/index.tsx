@@ -178,7 +178,7 @@ const Game = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-sky-100">
       {/* Top Bar */}
-      <div className="fixed top-0 flex justify-between items-center w-full p-2 bg-[#FC7F18]">
+      <div className="fixed top-0 z-10 flex justify-between items-center w-full p-2 bg-[#FC7F18]">
         <div className="flex items-center justify-evenly gap-3">
           <Image src={bonktomoon} alt="bonktomoon" width={150} height={100} />
         </div>

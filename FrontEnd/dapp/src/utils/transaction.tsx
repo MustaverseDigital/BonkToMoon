@@ -1,16 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as anchor from "@coral-xyz/anchor";
 import { Program, AnchorProvider } from "@coral-xyz/anchor";
 import { PublicKey, Connection } from "@solana/web3.js";
-
-// Define or import programType
-type programType = any; // Replace 'any' with the actual type if known
 import { AnchorWallet } from "@solana/wallet-adapter-react";
 
 export const getProgram = (
   connection: Connection,
   wallet: AnchorWallet,
-  idl: unknown,
+  idl: any,
   contractAddress: string,
   authority: PublicKey // Add authority parameter
 ) => {

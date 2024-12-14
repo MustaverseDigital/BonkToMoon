@@ -7,11 +7,11 @@ export const getLeaderboard = async (
   program: anchor.Program,
   leaderboardPda: PublicKey
 ) => {
-  const leaderboardAccount = (await program.account.leaderboard.fetch(
+  const leaderboardAccount = await program.account.leaderboard.fetch(
     leaderboardPda
-  )) as { players: { name: string; score: number; address: PublicKey }[] };
+  );
 
-  const playersList = leaderboardAccount.players.map((player) => ({
+  const playersList = leaderboardAccount.players.map((player: any) => ({
     name: player.name,
     score: player.score,
     address: player.address.toBase58(),
@@ -30,11 +30,11 @@ export const addPrizePool = async (
     leaderboardPda
   );
   const contributorTokenAccount = await getAssociatedTokenAddress(
-    leaderboardAccount.tokenMint as PublicKey,
+    leaderboardAccount.tokenMint,
     wallet.publicKey
   );
   const tokenPoolAccount = await getAssociatedTokenAddress(
-    leaderboardAccount.tokenMint as PublicKey,
+    leaderboardAccount.tokenMint,
     leaderboardPda,
     true
   );
@@ -61,18 +61,17 @@ export const startGame = async (
   leaderboardPda: PublicKey,
   gameSessionPda: PublicKey,
   wallet: AnchorWallet,
-  gameName: string,
-  callback: () => void
+  gameName: string
 ) => {
   const leaderboardAccount = await program.account.leaderboard.fetch(
     leaderboardPda
   );
   const contributorTokenAccount = await getAssociatedTokenAddress(
-    leaderboardAccount.tokenMint as PublicKey,
+    leaderboardAccount.tokenMint,
     wallet.publicKey
   );
   const tokenPoolAccount = await getAssociatedTokenAddress(
-    leaderboardAccount.tokenMint as PublicKey,
+    leaderboardAccount.tokenMint,
     leaderboardPda,
     true
   );
@@ -94,7 +93,6 @@ export const startGame = async (
     .rpc();
 
   console.log("Start game Transaction:", tx);
-  callback();
 };
 
 export const endGame = async (
@@ -104,7 +102,6 @@ export const endGame = async (
   wallet: AnchorWallet,
   score: number
 ) => {
-  console.log("leaderboardPda:" + leaderboardPda.toString());
   const tx = await program.methods
     .endGame(new anchor.BN(score))
     .accounts({
@@ -127,11 +124,11 @@ export const claimPrize = async (
     leaderboardPda
   );
   const contributorTokenAccount = await getAssociatedTokenAddress(
-    leaderboardAccount.tokenMint as PublicKey,
+    leaderboardAccount.tokenMint,
     wallet.publicKey
   );
   const tokenPoolAccount = await getAssociatedTokenAddress(
-    leaderboardAccount.tokenMint as PublicKey,
+    leaderboardAccount.tokenMint,
     leaderboardPda,
     true
   );
